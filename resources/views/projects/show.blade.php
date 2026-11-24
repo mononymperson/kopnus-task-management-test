@@ -109,17 +109,48 @@
                 <div class="flex items-center justify-between mb-4 border-b border-slate-200 pb-3">
                     <h2 class="text-lg font-bold text-slate-900">Daftar Tugas</h2>
                     <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
-                        Total: {{ $project->tasks->count() }}
+                        Total: {{ $tasks->count() }}
                     </span>
                 </div>
 
-                @if($project->tasks->isEmpty())
+                <form method="GET" action="{{ route('projects.show', $project) }}" class="mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label for="q" class="sr-only">Cari judul tugas</label>
+                        <input type="text" id="q" name="q" value="{{ $filters['q'] ?? '' }}"
+                            placeholder="Cari judul tugas..."
+                            class="block w-full rounded-md border @error('q') border-red-500 @else border-slate-300 @enderror px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500">
+                        @error('q')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div>
+                        <label for="status_filter" class="sr-only">Filter status</label>
+                        <select id="status_filter" name="status"
+                            class="block w-full rounded-md border @error('status') border-red-500 @else border-slate-300 @enderror px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500">
+                            <option value="">Semua status</option>
+                            @foreach(App\Models\Task::ALLOWED_TRANSITIONS + [App\Models\Task::STATUS_COMPLETED => null] as $key => $value)
+                                <option value="{{ $key }}" {{ ($filters['status'] ?? '') === $key ? 'selected' : '' }}>
+                                    {{ ucfirst(str_replace('_', ' ', $key)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('status')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="rounded-md bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700">Cari</button>
+                        <a href="{{ route('projects.show', $project) }}" class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">Reset</a>
+                    </div>
+                </form>
+
+                @if($tasks->isEmpty())
                     <div class="text-center py-10">
                         <p class="text-slate-500 text-sm">Belum ada tugas pada proyek ini. Tambahkan tugas pertama melalui form di samping.</p>
                     </div>
                 @else
                     <div class="divide-y divide-slate-100">
-                        @foreach($project->tasks as $task)
+                        @foreach($tasks as $task)
                             <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div class="space-y-1">
                                     <h3 class="font-medium text-slate-900 text-base {{ $task->status === 'completed' ? 'line-through text-slate-400' : '' }}">
@@ -147,6 +178,12 @@
                                     @elseif($task->status === 'completed')
                                         <span class="inline-flex items-center rounded-md bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
                                             Completed
+                                        </span>
+                                    @endif
+
+                                    @if($task->due_date?->lt(today()) && $task->status !== App\Models\Task::STATUS_COMPLETED)
+                                        <span class="inline-flex items-center rounded-md bg-red-50 px-2 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-600/20">
+                                            Terlambat
                                         </span>
                                     @endif
 

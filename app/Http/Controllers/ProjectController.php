@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\TaskFilterRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
@@ -39,12 +40,19 @@ class ProjectController extends Controller
         return redirect()->route('dashboard')->with('success', 'Proyek berhasil dibuat.');
     }
 
-    public function show(Project $project)
+    public function show(TaskFilterRequest $request, Project $project)
     {
         $this->authorize('view', $project);
-        $project->load(['tasks' => fn ($q) => $q->latest()]);
 
-        return view('projects.show', compact('project'));
+        $filters = $request->validated();
+
+        $tasks = $project->tasks()
+            ->when($filters['q'] ?? null, fn ($query, $title) => $query->whereRaw('LOWER(title) LIKE ?', ['%'.mb_strtolower($title).'%']))
+            ->when($filters['status'] ?? null, fn ($query, $status) => $query->where('status', $status))
+            ->latest()
+            ->get();
+
+        return view('projects.show', compact('project', 'tasks', 'filters'));
     }
 
     public function update(UpdateProjectRequest $request, Project $project)

@@ -21,7 +21,7 @@ class TaskService
 
             ActivityLog::create([
                 'user_id' => $user->id,
-                'action' => 'TASK_CREATED',
+                'action' => ActivityLog::TASK_CREATED,
                 'subject_type' => Task::class,
                 'subject_id' => $task->id,
                 'payload' => [
@@ -51,7 +51,7 @@ class TaskService
 
             ActivityLog::create([
                 'user_id' => $user->id,
-                'action' => 'TASK_STATUS_UPDATED',
+                'action' => ActivityLog::TASK_STATUS_UPDATED,
                 'subject_type' => Task::class,
                 'subject_id' => $task->id,
                 'payload' => [
@@ -69,7 +69,7 @@ class TaskService
         DB::transaction(function () use ($user, $task) {
             ActivityLog::create([
                 'user_id' => $user->id,
-                'action' => 'TASK_DELETED',
+                'action' => ActivityLog::TASK_DELETED,
                 'subject_type' => Task::class,
                 'subject_id' => $task->id,
                 'payload' => ['title' => $task->title],

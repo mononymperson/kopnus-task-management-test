@@ -18,6 +18,9 @@
                         <a href="{{ route('dashboard') }}" class="text-sm font-medium {{ request()->routeIs('dashboard') ? 'text-indigo-600' : 'text-slate-600 hover:text-slate-900' }}">
                             Dashboard
                         </a>
+                        <a href="{{ route('activities.index') }}" class="text-sm font-medium {{ request()->routeIs('activities.*') ? 'text-indigo-600' : 'text-slate-600 hover:text-slate-900' }}">
+                            Riwayat Aktivitas
+                        </a>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-sm text-slate-600">

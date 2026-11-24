@@ -13,6 +13,22 @@ class ActivityLog extends Model
 
     public const UPDATED_AT = null;
 
+    public const PROJECT_CREATED = 'PROJECT_CREATED';
+    public const PROJECT_UPDATED = 'PROJECT_UPDATED';
+    public const PROJECT_DELETED = 'PROJECT_DELETED';
+    public const TASK_CREATED = 'TASK_CREATED';
+    public const TASK_STATUS_UPDATED = 'TASK_STATUS_UPDATED';
+    public const TASK_DELETED = 'TASK_DELETED';
+
+    public const ACTIONS = [
+        self::PROJECT_CREATED => 'Proyek Dibuat',
+        self::PROJECT_UPDATED => 'Proyek Diperbarui',
+        self::PROJECT_DELETED => 'Proyek Dihapus',
+        self::TASK_CREATED => 'Tugas Dibuat',
+        self::TASK_STATUS_UPDATED => 'Status Tugas Diubah',
+        self::TASK_DELETED => 'Tugas Dihapus',
+    ];
+
     protected $fillable = [
         'user_id',
         'action',

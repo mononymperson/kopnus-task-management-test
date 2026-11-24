@@ -16,7 +16,7 @@ class ProjectService
 
             ActivityLog::create([
                 'user_id' => $user->id,
-                'action' => 'PROJECT_CREATED',
+                'action' => ActivityLog::PROJECT_CREATED,
                 'subject_type' => Project::class,
                 'subject_id' => $project->id,
                 'payload' => ['name' => $project->name],
@@ -33,7 +33,7 @@ class ProjectService
 
             ActivityLog::create([
                 'user_id' => $project->user_id,
-                'action' => 'PROJECT_UPDATED',
+                'action' => ActivityLog::PROJECT_UPDATED,
                 'subject_type' => Project::class,
                 'subject_id' => $project->id,
                 'payload' => ['name' => $project->name],
@@ -48,7 +48,7 @@ class ProjectService
         DB::transaction(function () use ($project) {
             ActivityLog::create([
                 'user_id' => $project->user_id,
-                'action' => 'PROJECT_DELETED',
+                'action' => ActivityLog::PROJECT_DELETED,
                 'subject_type' => Project::class,
                 'subject_id' => $project->id,
                 'payload' => ['name' => $project->name],

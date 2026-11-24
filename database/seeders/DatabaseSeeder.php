@@ -2,9 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,11 +18,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $user = User::firstOrCreate(
+            ['email' => 'user@example.com'],
+            [
+                'name' => 'Default User',
+                'password' => Hash::make('password123'),
+                'email_verified_at' => now(),
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $project = Project::firstOrCreate(
+            ['user_id' => $user->id, 'name' => 'Default Project'],
+            ['description' => 'Proyek contoh dari seeder.']
+        );
+
+        Task::firstOrCreate(
+            ['project_id' => $project->id, 'title' => 'Default Task'],
+            ['status' => Task::STATUS_PENDING]
+        );
     }
 }
